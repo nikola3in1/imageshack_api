@@ -1,4 +1,4 @@
-package com.nikola2934.app.model.helper;
+package com.nikola2934.app.model.response.helper;
 
 public class Images {
     private String filename = "";

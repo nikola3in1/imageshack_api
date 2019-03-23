@@ -6,10 +6,11 @@ import au.edu.jcu.v4l4j.VideoDevice;
 import au.edu.jcu.v4l4j.VideoFrame;
 import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 import com.github.sarxos.v4l4j.V4L4J;
+import com.nikola2934.app.model.Image;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -21,9 +22,8 @@ public class Cam implements CaptureCallback {
 
     private CountDownLatch latch = new CountDownLatch(1);
     private String fileName;
-    private final String path = "/home/pi/Remote/imageshack_api/cam/";
     private String fileFormat;
-    private File image;
+    private Image image;
 
     public Cam(String fileFormat, int width, int height) throws Exception {
         this.fileFormat = fileFormat.toUpperCase();
@@ -32,7 +32,7 @@ public class Cam implements CaptureCallback {
         grabber.setCaptureCallback(this);
         grabber.startCapture();
 
-        latch.await(10, TimeUnit.SECONDS);
+        latch.await(5, TimeUnit.SECONDS);
 
         grabber.stopCapture();
         device.releaseFrameGrabber();
@@ -48,9 +48,13 @@ public class Cam implements CaptureCallback {
         image_to_save2.getGraphics().drawImage(bufferedImage, 0, 0, null);
         bufferedImage = image_to_save2;
 
-        image = new File(path + getFileName());
         try {
-            ImageIO.write(bufferedImage, fileFormat, image);
+            ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, fileFormat, dataStream);
+            dataStream.flush();
+            dataStream.close();
+            image = new Image(dataStream, getFileName());
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -65,17 +69,12 @@ public class Cam implements CaptureCallback {
     }
 
     private String getFileName() {
-        if (fileName == null || fileName.isEmpty())
-            fileName = System.currentTimeMillis() + "." + fileFormat.toLowerCase();
-
+        fileName = System.currentTimeMillis() + "." + fileFormat.toLowerCase();
         return fileName;
     }
 
-    public File getImage() {
+    public Image getImage() {
         return image;
     }
 
-    public String getImagePath(){
-        return path + fileName;
-    }
 }

@@ -1,4 +1,4 @@
-package com.nikola2934.app.model;
+package com.nikola2934.app.model.response;
 
 //Response model class
 public class Login{

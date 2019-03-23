@@ -1,9 +1,9 @@
 package com.nikola2934.app.service;
 
-import java.util.Map;
+import com.nikola2934.app.model.Image;
 
 public interface ImageshackAPIService {
     String login();
-    String upload(String imgPath);
+    String upload(Image image);
     String getAuthToken();
 }

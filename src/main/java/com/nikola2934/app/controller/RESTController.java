@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
+
+/*This class is purely used for testing purposes*/
 
 @RestController
 @RequestMapping("/rest/api/**")
@@ -25,31 +26,35 @@ public class RESTController {
         return imgApiService.getAuthToken();
     }
 
-    @GetMapping("/cam")
-    public String camTest() {
-        for (int i = 0; i < 10; i++) {
-            camService.capture();
-        }
-        return "done";
-    }
+//    @GetMapping("/cam")
+//    public String camTest() {
+//        return camService.capture().getPath();
+//    }
 
     @GetMapping("/upload")
     public String upload() {
         imgApiService.login();
-        String imgPath = camService.capture();
-        String response = imgApiService.upload(imgPath);
-        return "Response: " + response;
+        Long startTime = System.currentTimeMillis();
+        String response = "";
 
-    }
-
-    @GetMapping("/path")
-    public String path() {
-        try {
-            return new File(RESTController.class.getProtectionDomain().getCodeSource().getLocation()
-                    .toURI()).getPath();
-        } catch (Exception e) {
-            System.out.println(e);
+        for (int i = 0; i < 50; i++) {
+            response += imgApiService.upload(camService.capture())+ "\n";
         }
-        return "as";
+
+        Long takenTime = System.currentTimeMillis() - startTime;
+        response += "\nTime taken: " + takenTime;
+        return "\nResponse: " + response;
     }
+
+//    private String uploadPicture(int nr) {
+//        String response = "";
+//        for (int i = 0; i <= nr; i++) {
+//            File image = camService.capture();
+//            response += "Image nr. " + i + " : " + imgApiService.upload(image)+" \n";
+//        }
+
+//        response += "Time taken: " + takenTime;
+//        return "\n"+response;
+//    }
+
 }

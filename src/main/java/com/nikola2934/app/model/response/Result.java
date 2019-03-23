@@ -1,4 +1,4 @@
-package com.nikola2934.app.model;
+package com.nikola2934.app.model.response;
 
 //Inner object in class repsonse model class Login
 public class Result {
